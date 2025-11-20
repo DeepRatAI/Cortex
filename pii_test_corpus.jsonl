@@ -1,0 +1,100 @@
+{"doc_id": "synth-pii-dni-001", "text": "El DNI del cliente 10.000.001 debe ser verificado. ID de caso: synth-pii-dni-001.", "pii_ground_truth": {"dni": ["10.000.001"]}}
+{"doc_id": "synth-pii-dni-002", "text": "El DNI del cliente 10.000.002 debe ser verificado. ID de caso: synth-pii-dni-002.", "pii_ground_truth": {"dni": ["10.000.002"]}}
+{"doc_id": "synth-pii-dni-003", "text": "El DNI del cliente 10.000.003 debe ser verificado. ID de caso: synth-pii-dni-003.", "pii_ground_truth": {"dni": ["10.000.003"]}}
+{"doc_id": "synth-pii-dni-004", "text": "El DNI del cliente 10.000.004 debe ser verificado. ID de caso: synth-pii-dni-004.", "pii_ground_truth": {"dni": ["10.000.004"]}}
+{"doc_id": "synth-pii-dni-005", "text": "El DNI del cliente 10.000.005 debe ser verificado. ID de caso: synth-pii-dni-005.", "pii_ground_truth": {"dni": ["10.000.005"]}}
+{"doc_id": "synth-pii-dni-006", "text": "El DNI del cliente 10.000.006 debe ser verificado. ID de caso: synth-pii-dni-006.", "pii_ground_truth": {"dni": ["10.000.006"]}}
+{"doc_id": "synth-pii-dni-007", "text": "El DNI del cliente 10.000.007 debe ser verificado. ID de caso: synth-pii-dni-007.", "pii_ground_truth": {"dni": ["10.000.007"]}}
+{"doc_id": "synth-pii-dni-008", "text": "El DNI del cliente 10.000.008 debe ser verificado. ID de caso: synth-pii-dni-008.", "pii_ground_truth": {"dni": ["10.000.008"]}}
+{"doc_id": "synth-pii-dni-009", "text": "El DNI del cliente 10.000.009 debe ser verificado. ID de caso: synth-pii-dni-009.", "pii_ground_truth": {"dni": ["10.000.009"]}}
+{"doc_id": "synth-pii-dni-010", "text": "El DNI del cliente 10.000.010 debe ser verificado. ID de caso: synth-pii-dni-010.", "pii_ground_truth": {"dni": ["10.000.010"]}}
+{"doc_id": "synth-pii-dni-011", "text": "El DNI del cliente 10.000.011 debe ser verificado. ID de caso: synth-pii-dni-011.", "pii_ground_truth": {"dni": ["10.000.011"]}}
+{"doc_id": "synth-pii-dni-012", "text": "El DNI del cliente 10.000.012 debe ser verificado. ID de caso: synth-pii-dni-012.", "pii_ground_truth": {"dni": ["10.000.012"]}}
+{"doc_id": "synth-pii-dni-013", "text": "El DNI del cliente 10.000.013 debe ser verificado. ID de caso: synth-pii-dni-013.", "pii_ground_truth": {"dni": ["10.000.013"]}}
+{"doc_id": "synth-pii-dni-014", "text": "El DNI del cliente 10.000.014 debe ser verificado. ID de caso: synth-pii-dni-014.", "pii_ground_truth": {"dni": ["10.000.014"]}}
+{"doc_id": "synth-pii-dni-015", "text": "El DNI del cliente 10.000.015 debe ser verificado. ID de caso: synth-pii-dni-015.", "pii_ground_truth": {"dni": ["10.000.015"]}}
+{"doc_id": "synth-pii-dni-016", "text": "El DNI del cliente 10.000.016 debe ser verificado. ID de caso: synth-pii-dni-016.", "pii_ground_truth": {"dni": ["10.000.016"]}}
+{"doc_id": "synth-pii-dni-017", "text": "El DNI del cliente 10.000.017 debe ser verificado. ID de caso: synth-pii-dni-017.", "pii_ground_truth": {"dni": ["10.000.017"]}}
+{"doc_id": "synth-pii-dni-018", "text": "El DNI del cliente 10.000.018 debe ser verificado. ID de caso: synth-pii-dni-018.", "pii_ground_truth": {"dni": ["10.000.018"]}}
+{"doc_id": "synth-pii-dni-019", "text": "El DNI del cliente 10.000.019 debe ser verificado. ID de caso: synth-pii-dni-019.", "pii_ground_truth": {"dni": ["10.000.019"]}}
+{"doc_id": "synth-pii-dni-020", "text": "El DNI del cliente 10.000.020 debe ser verificado. ID de caso: synth-pii-dni-020.", "pii_ground_truth": {"dni": ["10.000.020"]}}
+{"doc_id": "synth-pii-dni-021", "text": "El DNI del cliente 10.000.021 debe ser verificado. ID de caso: synth-pii-dni-021.", "pii_ground_truth": {"dni": ["10.000.021"]}}
+{"doc_id": "synth-pii-dni-022", "text": "El DNI del cliente 10.000.022 debe ser verificado. ID de caso: synth-pii-dni-022.", "pii_ground_truth": {"dni": ["10.000.022"]}}
+{"doc_id": "synth-pii-dni-023", "text": "El DNI del cliente 10.000.023 debe ser verificado. ID de caso: synth-pii-dni-023.", "pii_ground_truth": {"dni": ["10.000.023"]}}
+{"doc_id": "synth-pii-dni-024", "text": "El DNI del cliente 10.000.024 debe ser verificado. ID de caso: synth-pii-dni-024.", "pii_ground_truth": {"dni": ["10.000.024"]}}
+{"doc_id": "synth-pii-dni-025", "text": "El DNI del cliente 10.000.025 debe ser verificado. ID de caso: synth-pii-dni-025.", "pii_ground_truth": {"dni": ["10.000.025"]}}
+{"doc_id": "synth-pii-cuit-001", "text": "Por favor facturar al CUIT 20-10000026-6. No omitir este dato.", "pii_ground_truth": {"cuit": ["20-10000026-6"]}}
+{"doc_id": "synth-pii-cuit-002", "text": "Por favor facturar al CUIT 20-10000027-7. No omitir este dato.", "pii_ground_truth": {"cuit": ["20-10000027-7"]}}
+{"doc_id": "synth-pii-cuit-003", "text": "Por favor facturar al CUIT 20-10000028-8. No omitir este dato.", "pii_ground_truth": {"cuit": ["20-10000028-8"]}}
+{"doc_id": "synth-pii-cuit-004", "text": "Por favor facturar al CUIT 20-10000029-9. No omitir este dato.", "pii_ground_truth": {"cuit": ["20-10000029-9"]}}
+{"doc_id": "synth-pii-cuit-005", "text": "Por favor facturar al CUIT 20-10000030-0. No omitir este dato.", "pii_ground_truth": {"cuit": ["20-10000030-0"]}}
+{"doc_id": "synth-pii-cuit-006", "text": "Por favor facturar al CUIT 20-10000031-1. No omitir este dato.", "pii_ground_truth": {"cuit": ["20-10000031-1"]}}
+{"doc_id": "synth-pii-cuit-007", "text": "Por favor facturar al CUIT 20-10000032-2. No omitir este dato.", "pii_ground_truth": {"cuit": ["20-10000032-2"]}}
+{"doc_id": "synth-pii-cuit-008", "text": "Por favor facturar al CUIT 20-10000033-3. No omitir este dato.", "pii_ground_truth": {"cuit": ["20-10000033-3"]}}
+{"doc_id": "synth-pii-cuit-009", "text": "Por favor facturar al CUIT 20-10000034-4. No omitir este dato.", "pii_ground_truth": {"cuit": ["20-10000034-4"]}}
+{"doc_id": "synth-pii-cuit-010", "text": "Por favor facturar al CUIT 20-10000035-5. No omitir este dato.", "pii_ground_truth": {"cuit": ["20-10000035-5"]}}
+{"doc_id": "synth-pii-cuit-011", "text": "Por favor facturar al CUIT 20-10000036-6. No omitir este dato.", "pii_ground_truth": {"cuit": ["20-10000036-6"]}}
+{"doc_id": "synth-pii-cuit-012", "text": "Por favor facturar al CUIT 20-10000037-7. No omitir este dato.", "pii_ground_truth": {"cuit": ["20-10000037-7"]}}
+{"doc_id": "synth-pii-cuit-013", "text": "Por favor facturar al CUIT 20-10000038-8. No omitir este dato.", "pii_ground_truth": {"cuit": ["20-10000038-8"]}}
+{"doc_id": "synth-pii-cuit-014", "text": "Por favor facturar al CUIT 20-10000039-9. No omitir este dato.", "pii_ground_truth": {"cuit": ["20-10000039-9"]}}
+{"doc_id": "synth-pii-cuit-015", "text": "Por favor facturar al CUIT 20-10000040-0. No omitir este dato.", "pii_ground_truth": {"cuit": ["20-10000040-0"]}}
+{"doc_id": "synth-pii-cuit-016", "text": "Por favor facturar al CUIT 20-10000041-1. No omitir este dato.", "pii_ground_truth": {"cuit": ["20-10000041-1"]}}
+{"doc_id": "synth-pii-cuit-017", "text": "Por favor facturar al CUIT 20-10000042-2. No omitir este dato.", "pii_ground_truth": {"cuit": ["20-10000042-2"]}}
+{"doc_id": "synth-pii-cuit-018", "text": "Por favor facturar al CUIT 20-10000043-3. No omitir este dato.", "pii_ground_truth": {"cuit": ["20-10000043-3"]}}
+{"doc_id": "synth-pii-cuit-019", "text": "Por favor facturar al CUIT 20-10000044-4. No omitir este dato.", "pii_ground_truth": {"cuit": ["20-10000044-4"]}}
+{"doc_id": "synth-pii-cuit-020", "text": "Por favor facturar al CUIT 20-10000045-5. No omitir este dato.", "pii_ground_truth": {"cuit": ["20-10000045-5"]}}
+{"doc_id": "synth-pii-cuit-021", "text": "Por favor facturar al CUIT 20-10000046-6. No omitir este dato.", "pii_ground_truth": {"cuit": ["20-10000046-6"]}}
+{"doc_id": "synth-pii-cuit-022", "text": "Por favor facturar al CUIT 20-10000047-7. No omitir este dato.", "pii_ground_truth": {"cuit": ["20-10000047-7"]}}
+{"doc_id": "synth-pii-cuit-023", "text": "Por favor facturar al CUIT 20-10000048-8. No omitir este dato.", "pii_ground_truth": {"cuit": ["20-10000048-8"]}}
+{"doc_id": "synth-pii-cuit-024", "text": "Por favor facturar al CUIT 20-10000049-9. No omitir este dato.", "pii_ground_truth": {"cuit": ["20-10000049-9"]}}
+{"doc_id": "synth-pii-cuit-025", "text": "Por favor facturar al CUIT 20-10000050-0. No omitir este dato.", "pii_ground_truth": {"cuit": ["20-10000050-0"]}}
+{"doc_id": "synth-pii-tarjeta-001", "text": "El pago de 1577 ARS se hizo con la tarjeta 41112222333300514.", "pii_ground_truth": {"card": ["41112222333300514"]}}
+{"doc_id": "synth-pii-tarjeta-002", "text": "El pago de 4399 ARS se hizo con la tarjeta 41112222333300522.", "pii_ground_truth": {"card": ["41112222333300522"]}}
+{"doc_id": "synth-pii-tarjeta-003", "text": "El pago de 2772 ARS se hizo con la tarjeta 41112222333300530.", "pii_ground_truth": {"card": ["41112222333300530"]}}
+{"doc_id": "synth-pii-tarjeta-004", "text": "El pago de 3209 ARS se hizo con la tarjeta 41112222333300548.", "pii_ground_truth": {"card": ["41112222333300548"]}}
+{"doc_id": "synth-pii-tarjeta-005", "text": "El pago de 3357 ARS se hizo con la tarjeta 41112222333300555.", "pii_ground_truth": {"card": ["41112222333300555"]}}
+{"doc_id": "synth-pii-tarjeta-006", "text": "El pago de 1258 ARS se hizo con la tarjeta 41112222333300563.", "pii_ground_truth": {"card": ["41112222333300563"]}}
+{"doc_id": "synth-pii-tarjeta-007", "text": "El pago de 4113 ARS se hizo con la tarjeta 41112222333300571.", "pii_ground_truth": {"card": ["41112222333300571"]}}
+{"doc_id": "synth-pii-tarjeta-008", "text": "El pago de 3142 ARS se hizo con la tarjeta 41112222333300589.", "pii_ground_truth": {"card": ["41112222333300589"]}}
+{"doc_id": "synth-pii-tarjeta-009", "text": "El pago de 4438 ARS se hizo con la tarjeta 41112222333300597.", "pii_ground_truth": {"card": ["41112222333300597"]}}
+{"doc_id": "synth-pii-tarjeta-010", "text": "El pago de 1402 ARS se hizo con la tarjeta 41112222333300605.", "pii_ground_truth": {"card": ["41112222333300605"]}}
+{"doc_id": "synth-pii-tarjeta-011", "text": "El pago de 2841 ARS se hizo con la tarjeta 41112222333300613.", "pii_ground_truth": {"card": ["41112222333300613"]}}
+{"doc_id": "synth-pii-tarjeta-012", "text": "El pago de 4370 ARS se hizo con la tarjeta 41112222333300621.", "pii_ground_truth": {"card": ["41112222333300621"]}}
+{"doc_id": "synth-pii-tarjeta-013", "text": "El pago de 3484 ARS se hizo con la tarjeta 41112222333300639.", "pii_ground_truth": {"card": ["41112222333300639"]}}
+{"doc_id": "synth-pii-tarjeta-014", "text": "El pago de 4388 ARS se hizo con la tarjeta 41112222333300647.", "pii_ground_truth": {"card": ["41112222333300647"]}}
+{"doc_id": "synth-pii-tarjeta-015", "text": "El pago de 3878 ARS se hizo con la tarjeta 41112222333300654.", "pii_ground_truth": {"card": ["41112222333300654"]}}
+{"doc_id": "synth-pii-tarjeta-016", "text": "El pago de 1550 ARS se hizo con la tarjeta 41112222333300662.", "pii_ground_truth": {"card": ["41112222333300662"]}}
+{"doc_id": "synth-pii-tarjeta-017", "text": "El pago de 4335 ARS se hizo con la tarjeta 41112222333300670.", "pii_ground_truth": {"card": ["41112222333300670"]}}
+{"doc_id": "synth-pii-tarjeta-018", "text": "El pago de 3466 ARS se hizo con la tarjeta 41112222333300688.", "pii_ground_truth": {"card": ["41112222333300688"]}}
+{"doc_id": "synth-pii-tarjeta-019", "text": "El pago de 1881 ARS se hizo con la tarjeta 41112222333300696.", "pii_ground_truth": {"card": ["41112222333300696"]}}
+{"doc_id": "synth-pii-tarjeta-020", "text": "El pago de 2107 ARS se hizo con la tarjeta 41112222333300704.", "pii_ground_truth": {"card": ["41112222333300704"]}}
+{"doc_id": "synth-pii-tarjeta-021", "text": "El pago de 3705 ARS se hizo con la tarjeta 41112222333300712.", "pii_ground_truth": {"card": ["41112222333300712"]}}
+{"doc_id": "synth-pii-tarjeta-022", "text": "El pago de 2239 ARS se hizo con la tarjeta 41112222333300720.", "pii_ground_truth": {"card": ["41112222333300720"]}}
+{"doc_id": "synth-pii-tarjeta-023", "text": "El pago de 3683 ARS se hizo con la tarjeta 41112222333300738.", "pii_ground_truth": {"card": ["41112222333300738"]}}
+{"doc_id": "synth-pii-tarjeta-024", "text": "El pago de 4769 ARS se hizo con la tarjeta 41112222333300746.", "pii_ground_truth": {"card": ["41112222333300746"]}}
+{"doc_id": "synth-pii-tarjeta-025", "text": "El pago de 2581 ARS se hizo con la tarjeta 41112222333300753.", "pii_ground_truth": {"card": ["41112222333300753"]}}
+{"doc_id": "synth-pii-telefono_email-001", "text": "Contactar a Dante Ramirez al +5493515000076 o vía email a cliente_test_76@bancoficticio.test.", "pii_ground_truth": {"phone": ["+5493515000076"], "email": ["cliente_test_76@bancoficticio.test"]}}
+{"doc_id": "synth-pii-telefono_email-002", "text": "Contactar a Dr(a). Sofia Flores al +5493515000077 o vía email a cliente_test_77@bancoficticio.test.", "pii_ground_truth": {"phone": ["+5493515000077"], "email": ["cliente_test_77@bancoficticio.test"]}}
+{"doc_id": "synth-pii-telefono_email-003", "text": "Contactar a Zoe Francisco Fernandez al +5493515000078 o vía email a cliente_test_78@bancoficticio.test.", "pii_ground_truth": {"phone": ["+5493515000078"], "email": ["cliente_test_78@bancoficticio.test"]}}
+{"doc_id": "synth-pii-telefono_email-004", "text": "Contactar a Dr(a). Lola Gomez al +5493515000079 o vía email a cliente_test_79@bancoficticio.test.", "pii_ground_truth": {"phone": ["+5493515000079"], "email": ["cliente_test_79@bancoficticio.test"]}}
+{"doc_id": "synth-pii-telefono_email-005", "text": "Contactar a Bastian Ledesma Diaz al +5493515000080 o vía email a cliente_test_80@bancoficticio.test.", "pii_ground_truth": {"phone": ["+5493515000080"], "email": ["cliente_test_80@bancoficticio.test"]}}
+{"doc_id": "synth-pii-telefono_email-006", "text": "Contactar a Valentin Mendez al +5493515000081 o vía email a cliente_test_81@bancoficticio.test.", "pii_ground_truth": {"phone": ["+5493515000081"], "email": ["cliente_test_81@bancoficticio.test"]}}
+{"doc_id": "synth-pii-telefono_email-007", "text": "Contactar a Bianca Gomez al +5493515000082 o vía email a cliente_test_82@bancoficticio.test.", "pii_ground_truth": {"phone": ["+5493515000082"], "email": ["cliente_test_82@bancoficticio.test"]}}
+{"doc_id": "synth-pii-telefono_email-008", "text": "Contactar a Uma  Ramos Soria al +5493515000083 o vía email a cliente_test_83@bancoficticio.test.", "pii_ground_truth": {"phone": ["+5493515000083"], "email": ["cliente_test_83@bancoficticio.test"]}}
+{"doc_id": "synth-pii-telefono_email-009", "text": "Contactar a Ignacio Rios Cardozo al +5493515000084 o vía email a cliente_test_84@bancoficticio.test.", "pii_ground_truth": {"phone": ["+5493515000084"], "email": ["cliente_test_84@bancoficticio.test"]}}
+{"doc_id": "synth-pii-telefono_email-010", "text": "Contactar a Sr(a). Thiago Valentin Perez al +5493515000085 o vía email a cliente_test_85@bancoficticio.test.", "pii_ground_truth": {"phone": ["+5493515000085"], "email": ["cliente_test_85@bancoficticio.test"]}}
+{"doc_id": "synth-pii-telefono_email-011", "text": "Contactar a Priscila Julieta Villalba al +5493515000086 o vía email a cliente_test_86@bancoficticio.test.", "pii_ground_truth": {"phone": ["+5493515000086"], "email": ["cliente_test_86@bancoficticio.test"]}}
+{"doc_id": "synth-pii-telefono_email-012", "text": "Contactar a Lola Federico Duarte al +5493515000087 o vía email a cliente_test_87@bancoficticio.test.", "pii_ground_truth": {"phone": ["+5493515000087"], "email": ["cliente_test_87@bancoficticio.test"]}}
+{"doc_id": "synth-pii-telefono_email-013", "text": "Contactar a Guadalupe Lorenzo Coronel Rodriguez al +5493515000088 o vía email a cliente_test_88@bancoficticio.test.", "pii_ground_truth": {"phone": ["+5493515000088"], "email": ["cliente_test_88@bancoficticio.test"]}}
+{"doc_id": "synth-pii-telefono_email-014", "text": "Contactar a Delfina Felipe Bravo Soto al +5493515000089 o vía email a cliente_test_89@bancoficticio.test.", "pii_ground_truth": {"phone": ["+5493515000089"], "email": ["cliente_test_89@bancoficticio.test"]}}
+{"doc_id": "synth-pii-telefono_email-015", "text": "Contactar a Lautaro Benjamin Gonzalez Sanchez al +5493515000090 o vía email a cliente_test_90@bancoficticio.test.", "pii_ground_truth": {"phone": ["+5493515000090"], "email": ["cliente_test_90@bancoficticio.test"]}}
+{"doc_id": "synth-pii-telefono_email-016", "text": "Contactar a Angelina Perez al +5493515000091 o vía email a cliente_test_91@bancoficticio.test.", "pii_ground_truth": {"phone": ["+5493515000091"], "email": ["cliente_test_91@bancoficticio.test"]}}
+{"doc_id": "synth-pii-telefono_email-017", "text": "Contactar a Santino Lautaro Romero al +5493515000092 o vía email a cliente_test_92@bancoficticio.test.", "pii_ground_truth": {"phone": ["+5493515000092"], "email": ["cliente_test_92@bancoficticio.test"]}}
+{"doc_id": "synth-pii-telefono_email-018", "text": "Contactar a Jazmín Julieta Suarez al +5493515000093 o vía email a cliente_test_93@bancoficticio.test.", "pii_ground_truth": {"phone": ["+5493515000093"], "email": ["cliente_test_93@bancoficticio.test"]}}
+{"doc_id": "synth-pii-telefono_email-019", "text": "Contactar a Francisco Luca Garcia Torres al +5493515000094 o vía email a cliente_test_94@bancoficticio.test.", "pii_ground_truth": {"phone": ["+5493515000094"], "email": ["cliente_test_94@bancoficticio.test"]}}
+{"doc_id": "synth-pii-telefono_email-020", "text": "Contactar a Thiago Benjamin Gonzalez al +5493515000095 o vía email a cliente_test_95@bancoficticio.test.", "pii_ground_truth": {"phone": ["+5493515000095"], "email": ["cliente_test_95@bancoficticio.test"]}}
+{"doc_id": "synth-pii-telefono_email-021", "text": "Contactar a Martín Maria Luz Gimenez Navarro al +5493515000096 o vía email a cliente_test_96@bancoficticio.test.", "pii_ground_truth": {"phone": ["+5493515000096"], "email": ["cliente_test_96@bancoficticio.test"]}}
+{"doc_id": "synth-pii-telefono_email-022", "text": "Contactar a Sr(a). Felipe Rojas al +5493515000097 o vía email a cliente_test_97@bancoficticio.test.", "pii_ground_truth": {"phone": ["+5493515000097"], "email": ["cliente_test_97@bancoficticio.test"]}}
+{"doc_id": "synth-pii-telefono_email-023", "text": "Contactar a Zoe Jazmin Valentin Flores al +5493515000098 o vía email a cliente_test_98@bancoficticio.test.", "pii_ground_truth": {"phone": ["+5493515000098"], "email": ["cliente_test_98@bancoficticio.test"]}}
+{"doc_id": "synth-pii-telefono_email-024", "text": "Contactar a Ignacio Diaz Perez al +5493515000099 o vía email a cliente_test_99@bancoficticio.test.", "pii_ground_truth": {"phone": ["+5493515000099"], "email": ["cliente_test_99@bancoficticio.test"]}}
+{"doc_id": "synth-pii-telefono_email-025", "text": "Contactar a Ana Paula Valentina Ramirez al +5493515000100 o vía email a cliente_test_100@bancoficticio.test.", "pii_ground_truth": {"phone": ["+5493515000100"], "email": ["cliente_test_100@bancoficticio.test"]}}
