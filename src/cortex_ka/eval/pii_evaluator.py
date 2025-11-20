@@ -17,6 +17,18 @@ from typing import Dict, Iterable, List, Mapping, MutableMapping, Sequence
 from cortex_ka.application.pii import redact_pii
 
 
+def _get_repo_root() -> Path:
+    """Return the repository root directory.
+
+    We assume this file lives under:
+        <repo_root>/src/cortex_ka/eval/pii_evaluator.py
+
+    So the repo root is three levels above src/cortex_ka/eval:
+        eval -> cortex_ka -> src -> <repo_root>
+    """
+    return Path(__file__).resolve().parents[3]
+
+
 @dataclass
 class PiiSample:
     """Single entry from the synthetic PII test corpus.
@@ -68,6 +80,10 @@ def load_pii_corpus(path: Path | str) -> List[PiiSample]:
     """
 
     p = Path(path)
+    # Permite pasar una ruta relativa al repo root, como "pii_test_corpus.jsonl"
+    if not p.is_absolute():
+        p = _get_repo_root() / p
+
     samples: List[PiiSample] = []
     with p.open("r", encoding="utf-8") as f:
         for line in f:
