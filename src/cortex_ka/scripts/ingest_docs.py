@@ -5,13 +5,16 @@ This is a minimal, local-only pipeline intended for demos and tests.
 """
 
 from __future__ import annotations
+
 from dataclasses import dataclass
-from typing import Iterable, List
+from typing import Iterable, List, Any
 import json
 from pathlib import Path
 import uuid
+
 from qdrant_client import QdrantClient
 from qdrant_client.http import models as qmodels
+
 from cortex_ka.config import settings
 from cortex_ka.infrastructure.embedding_local import LocalEmbedder
 from cortex_ka.logging import logger
@@ -40,18 +43,76 @@ def simple_chunks(text: str, max_len: int = 400) -> list[str]:
     return acc
 
 
+def _embedding_dim(embedder: LocalEmbedder) -> int:
+    """Infer embedding dimensionality from a dummy call.
+
+    This keeps the Qdrant collection schema in sync with LocalEmbedder
+    without hardcoding a magic number here.
+    """
+    vecs = embedder.embed(["dim-probe"])
+    if not vecs:
+        raise RuntimeError("LocalEmbedder returned no vectors for probe text")
+    v0 = vecs[0]
+    if not isinstance(v0, (list, tuple)):
+        raise RuntimeError(f"Unexpected embedding type: {type(v0)!r}")
+    return len(v0)
+
+
+def _ensure_collection(client: QdrantClient, embedder: LocalEmbedder) -> None:
+    """Create the target collection in Qdrant if it does not exist.
+
+    Uses the same vector name ("text") and dimensionality as LocalEmbedder.
+    The collection name comes from settings.qdrant_collection_docs so that
+    ingesters, retrievers and demos all stay aligned.
+    """
+    collection_name = settings.qdrant_collection_docs
+
+    try:
+        client.get_collection(collection_name)
+        # Collection exists; nothing to do.
+        return
+    except Exception:
+        # Either the collection is missing or Qdrant is older and raised a
+        # different error. In both cases we attempt to create it.
+        pass
+
+    dim = _embedding_dim(embedder)
+
+    logger.info(
+        "qdrant_create_collection",
+        collection_name=collection_name,
+        dim=dim,
+        vector_name="text",
+    )
+
+    client.recreate_collection(
+        collection_name=collection_name,
+        vectors_config=qmodels.VectorParams(
+            size=dim,
+            distance=qmodels.Distance.COSINE,
+        ),
+    )
+
+
 def upsert_documents(docs: Iterable[IngestDoc]) -> int:
     client = QdrantClient(
         url=settings.qdrant_url, api_key=settings.qdrant_api_key or None
     )
     embedder = LocalEmbedder()
+
+    # Aseguramos que la colección exista antes del primer upsert. Esto es
+    # especialmente importante en entornos limpios como los runners de CI o
+    # los workflows de demo (ci_full_e2e_demo_v2), donde Qdrant arranca sin
+    # colecciones precreadas.
+    _ensure_collection(client, embedder)
+
     total = 0
     for d in docs:
         chunks = simple_chunks(d.content)
         if not chunks:
             continue
         vectors: List[List[float]] = embedder.embed(chunks)
-        points = []
+        points: list[qmodels.PointStruct] = []
         for i, (chunk, vec) in enumerate(zip(chunks, vectors)):
             # Qdrant expects point ids to be either unsigned integers or UUIDs.
             # We use UUID4 for each chunk to avoid format errors and keep ids
@@ -59,7 +120,11 @@ def upsert_documents(docs: Iterable[IngestDoc]) -> int:
             # inside the payload for traceability instead of being encoded in
             # the point id itself.
             pid = str(uuid.uuid4())
-            payload: dict = {"text": chunk, "source": d.source, "doc_id": d.doc_id}
+            payload: dict[str, Any] = {
+                "text": chunk,
+                "source": d.source,
+                "doc_id": d.doc_id,
+            }
             # Attach PII classification metadata for this chunk so that
             # downstream components (retrievers, auditors, policies) can make
             # decisions based on sensitivity without re-scanning raw text.
@@ -78,11 +143,18 @@ def upsert_documents(docs: Iterable[IngestDoc]) -> int:
             if d.metadata:
                 payload["metadata"] = d.metadata
             points.append(
-                qmodels.PointStruct(id=pid, vector={"text": vec}, payload=payload)  # type: ignore[arg-type]
+                qmodels.PointStruct(
+                    id=pid,
+                    vector={"text": vec},
+                    payload=payload,  # type: ignore[arg-type]
+                )
             )
+        if not points:
+            continue
         try:
             client.upsert(
-                collection_name=settings.qdrant_collection_docs, points=points
+                collection_name=settings.qdrant_collection_docs,
+                points=points,
             )
             total += len(points)
         except Exception as exc:  # pragma: no cover - defensive path
