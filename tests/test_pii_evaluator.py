@@ -24,6 +24,12 @@ def _get_repo_root() -> Path:
 
 
 def _load_test_corpus() -> List[PiiSample]:
+    """
+    Carga el corpus sintético de PII usado para evaluar el redactor.
+
+    El archivo debe estar en la raíz del repo con el nombre:
+        pii_test_corpus.jsonl
+    """
     repo_root = _get_repo_root()
     corpus_path = repo_root / "pii_test_corpus.jsonl"
 
@@ -34,7 +40,15 @@ def _load_test_corpus() -> List[PiiSample]:
             "is located at the repository root."
         )
 
-    return load_pii_corpus(corpus_path)
+    samples = load_pii_corpus(corpus_path)
+
+    # Pequeña comprobación de forma para detectar cambios raros.
+    if not isinstance(samples, list) or (samples and not isinstance(samples[0], PiiSample)):
+        raise AssertionError(
+            "load_pii_corpus() did not return a list[PiiSample] as expected"
+        )
+
+    return samples
 
 
 def test_load_pii_corpus_ok() -> None:
@@ -64,7 +78,6 @@ def test_evaluate_redaction_basic_metrics() -> None:
     assert result.total_pii_items >= 0
     assert result.leaked_items >= 0
 
-    # by_type debe tener el mismo soporte que los tipos del corpus
+    # by_type debe tener el mismo soporte que los tipos del corpus.
     if samples and samples[0].pii_ground_truth:
-        # No exigimos un valor concreto, solo que la estructura tenga sentido
         assert isinstance(result.by_type, dict)
