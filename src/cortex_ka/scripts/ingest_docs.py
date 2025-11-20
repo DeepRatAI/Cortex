@@ -5,16 +5,13 @@ This is a minimal, local-only pipeline intended for demos and tests.
 """
 
 from __future__ import annotations
-
 from dataclasses import dataclass
-from typing import Iterable, List, Any
+from typing import Iterable, List
 import json
 from pathlib import Path
 import uuid
-
 from qdrant_client import QdrantClient
 from qdrant_client.http import models as qmodels
-
 from cortex_ka.config import settings
 from cortex_ka.infrastructure.embedding_local import LocalEmbedder
 from cortex_ka.logging import logger
@@ -43,68 +40,66 @@ def simple_chunks(text: str, max_len: int = 400) -> list[str]:
     return acc
 
 
-def _embedding_dim(embedder: LocalEmbedder) -> int:
-    """Infer embedding dimensionality from a dummy call.
-
-    This keeps the Qdrant collection schema in sync with LocalEmbedder
-    without hardcoding a magic number here.
-    """
-    vecs = embedder.embed(["dim-probe"])
-    if not vecs:
-        raise RuntimeError("LocalEmbedder returned no vectors for probe text")
-    v0 = vecs[0]
-    if not isinstance(v0, (list, tuple)):
-        raise RuntimeError(f"Unexpected embedding type: {type(v0)!r}")
-    return len(v0)
-
-
-def _ensure_collection(client: QdrantClient, embedder: LocalEmbedder) -> None:
-    """Create the target collection in Qdrant if it does not exist.
-
-    Uses the same vector name ("text") and dimensionality as LocalEmbedder.
-    The collection name comes from settings.qdrant_collection_docs so that
-    ingesters, retrievers and demos all stay aligned.
-    """
-    collection_name = settings.qdrant_collection_docs
-
-    try:
-        client.get_collection(collection_name)
-        # Collection exists; nothing to do.
-        return
-    except Exception:
-        # Either the collection is missing or Qdrant is older and raised a
-        # different error. In both cases we attempt to create it.
-        pass
-
-    dim = _embedding_dim(embedder)
-
-    logger.info(
-        "qdrant_create_collection",
-        collection_name=collection_name,
-        dim=dim,
-        vector_name="text",
-    )
-
-    client.recreate_collection(
-        collection_name=collection_name,
-        vectors_config=qmodels.VectorParams(
-            size=dim,
-            distance=qmodels.Distance.COSINE,
-        ),
-    )
-
-
 def upsert_documents(docs: Iterable[IngestDoc]) -> int:
     client = QdrantClient(
         url=settings.qdrant_url, api_key=settings.qdrant_api_key or None
     )
     embedder = LocalEmbedder()
 
-    # Aseguramos que la colección exista antes del primer upsert. Esto es
-    # especialmente importante en entornos limpios como los runners de CI o
-    # los workflows de demo (ci_full_e2e_demo_v2), donde Qdrant arranca sin
-    # colecciones precreadas.
-    _ensure_collection(client, embedder)
+    # Ensure the target collection exists with the expected named vector
+    # before attempting any upserts. Qdrant returns
+    # "Not existing vector name error: text" if the collection was created
+    # without a named vector and we subsequently send {"text": ...}.
+    try:
+        dim = len(embedder.embed(["dimension_probe"])[0])
+    except Exception as exc:  # pragma: no cover - defensive path
+        logger.error("embedder_dimension_probe_failed", error=str(exc))
+        raise
+
+    try:
+        need_recreate = False
+        try:
+            info = client.get_collection(settings.qdrant_collection_docs)
+        except Exception:  # collection does not exist or other error
+            info = None
+
+        if info is not None:
+            vectors_cfg = info.config.params.vectors
+            # vectors_cfg can be either VectorParams (unnamed) or a dict of
+            # named VectorParams. We require a named vector "text".
+            if isinstance(vectors_cfg, qmodels.VectorParams):
+                need_recreate = True
+            else:
+                # dict-like of named vectors
+                if "text" not in vectors_cfg:
+                    need_recreate = True
+
+        if info is None or need_recreate:
+            if need_recreate:
+                logger.info(
+                    "qdrant_drop_collection_mismatched_schema",
+                    collection_name=settings.qdrant_collection_docs,
+                )
+                client.delete_collection(settings.qdrant_collection_docs)
+
+            logger.info(
+                "qdrant_create_collection",
+                collection_name=settings.qdrant_collection_docs,
+                dim=dim,
+                vector_name="text",
+            )
+            client.create_collection(
+                collection_name=settings.qdrant_collection_docs,
+                vectors_config={
+                    "text": qmodels.VectorParams(
+                        size=dim,
+                        distance=qmodels.Distance.COSINE,
+                    )
+                },
+            )
+    except Exception as exc:  # pragma: no cover - defensive path
+        logger.error("qdrant_ensure_collection_failed", error=str(exc))
+        raise
 
     total = 0
     for d in docs:
@@ -112,7 +107,7 @@ def upsert_documents(docs: Iterable[IngestDoc]) -> int:
         if not chunks:
             continue
         vectors: List[List[float]] = embedder.embed(chunks)
-        points: list[qmodels.PointStruct] = []
+        points = []
         for i, (chunk, vec) in enumerate(zip(chunks, vectors)):
             # Qdrant expects point ids to be either unsigned integers or UUIDs.
             # We use UUID4 for each chunk to avoid format errors and keep ids
@@ -120,11 +115,7 @@ def upsert_documents(docs: Iterable[IngestDoc]) -> int:
             # inside the payload for traceability instead of being encoded in
             # the point id itself.
             pid = str(uuid.uuid4())
-            payload: dict[str, Any] = {
-                "text": chunk,
-                "source": d.source,
-                "doc_id": d.doc_id,
-            }
+            payload: dict = {"text": chunk, "source": d.source, "doc_id": d.doc_id}
             # Attach PII classification metadata for this chunk so that
             # downstream components (retrievers, auditors, policies) can make
             # decisions based on sensitivity without re-scanning raw text.
@@ -149,12 +140,9 @@ def upsert_documents(docs: Iterable[IngestDoc]) -> int:
                     payload=payload,  # type: ignore[arg-type]
                 )
             )
-        if not points:
-            continue
         try:
             client.upsert(
-                collection_name=settings.qdrant_collection_docs,
-                points=points,
+                collection_name=settings.qdrant_collection_docs, points=points
             )
             total += len(points)
         except Exception as exc:  # pragma: no cover - defensive path
