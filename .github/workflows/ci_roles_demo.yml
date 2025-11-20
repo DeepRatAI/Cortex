@@ -1,0 +1,83 @@
+name: "Roles Demo (Standard vs Privileged)"
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  demo-roles:
+    runs-on: ubuntu-latest
+
+    services:
+      qdrant:
+        image: qdrant/qdrant:v1.9.0
+        ports:
+          - 6333:6333
+        options: >-
+          --health-cmd="curl -f http://localhost:6333/health || exit 1" \
+          --health-interval=5s \
+          --health-timeout=3s \
+          --health-retries=20
+
+    env:
+      HF_API_KEY: ${{ secrets.HF_API_KEY }}
+      CKA_LLM_PROVIDER: HF
+      CKA_DLP_ENABLED: "true"
+      CKA_USE_QDRANT: "true"
+      CKA_FAKE_LLM: "false"
+      CKA_API_KEY: demo-key-cli-81093
+      CKA_STANDARD_API_KEY: demo-key-cli-81093
+      CKA_PRIVILEGED_API_KEY: demo-key-cli-81093-ops
+      CKA_QDRANT_URL: http://localhost:6333
+      CKA_QDRANT_API_KEY: ""
+      CKA_DEMO_BASE_URL: http://127.0.0.1:8090
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install -r requirements-dev.txt
+
+      - name: Wait for Qdrant health
+        run: |
+          echo "Waiting for Qdrant to be healthy..."
+          for i in {1..30}; do
+            if curl -sf http://localhost:6333/health >/dev/null; then
+              echo "Qdrant is healthy"; break;
+            fi
+            echo "Qdrant not ready yet, retrying..."; sleep 2;
+          done
+
+      - name: Ingest synthetic banking corpus
+        run: |
+          python -c "from cortex_ka.scripts.ingest_docs import ingest_banking_corpus; ingest_banking_corpus('corpus_bancario_completo.jsonl')"
+
+      - name: Start API server
+        run: |
+          uvicorn cortex_ka.api.main:app --host 0.0.0.0 --port 8090 & echo $! > uvicorn_roles.pid
+          sleep 15
+
+      - name: Run roles demo script
+        run: |
+          python -m scripts.demo_roles_banking
+
+      - name: Dump server logs on failure
+        if: failure()
+        run: |
+          echo "uvicorn_roles.pid content:" || true
+          cat uvicorn_roles.pid || true
+
+      - name: Stop API server
+        if: always()
+        run: |
+          if [ -f uvicorn_roles.pid ]; then
+            kill "$(cat uvicorn_roles.pid)" || true
+          fi

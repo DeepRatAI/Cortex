@@ -1,0 +1,57 @@
+name: Full E2E Demo (HF + RAG + DLP)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  demo-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    env:
+      HF_API_KEY: ${{ secrets.HF_API_KEY }}
+      CKA_LLM_PROVIDER: HF
+      CKA_DLP_ENABLED: "true"
+      CKA_USE_QDRANT: "false"  # Para el demo usamos stub retriever
+      CKA_FAKE_LLM: "false"
+      CKA_API_KEY: "demo-key-cli-81093"
+      CKA_DEMO_BASE_URL: "http://127.0.0.1:8088"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install -r requirements-dev.txt
+
+      - name: Run API server (background)
+        run: |
+          python -m uvicorn cortex_ka.api.main:app --host 0.0.0.0 --port 8088 &
+          echo $! > uvicorn.pid
+          # Wait a bit for the server to come up
+          sleep 10
+
+      - name: Run full E2E demo script
+        run: |
+          python -m scripts.demo_full_e2e_real
+
+      - name: Show server logs on failure
+        if: failure()
+        run: |
+          echo "Uvicorn process logs (if any)"
+          ps aux | grep uvicorn || true
+
+      - name: Stop API server
+        if: always()
+        run: |
+          if [ -f uvicorn.pid ]; then
+            kill "$(cat uvicorn.pid)" || true
+          fi

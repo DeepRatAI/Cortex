@@ -1,0 +1,96 @@
+name: "Full E2E Demo v2 (HF + Qdrant + Corpus + DLP)"
+
+on:
+  workflow_dispatch:
+
+env:
+  HF_API_KEY: ${{ secrets.HF_API_KEY }}
+  CKA_LLM_PROVIDER: "HF"
+  CKA_DLP_ENABLED: "true"
+  CKA_USE_QDRANT: "true"
+  CKA_FAKE_LLM: "false"
+  CKA_API_KEY: "demo-key-cli-81093"
+  CKA_DEMO_BASE_URL: "http://127.0.0.1:8089"
+  CKA_PROJECT_ROOT: "./"
+
+jobs:
+  demo-e2e-v2:
+    runs-on: ubuntu-latest
+
+    services:
+      qdrant:
+        image: qdrant/qdrant:latest
+        ports:
+          - 6333:6333
+        env:
+          QDRANT__LOG_LEVEL: INFO
+          QDRANT__SERVICE__HTTP_PORT: 6333
+          QDRANT__SERVICE__GRPC_PORT: 6334
+          QDRANT__SERVICE__HOST: 0.0.0.0
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install -r requirements-dev.txt
+
+      - name: Wait for Qdrant
+        run: |
+          for i in {1..20}; do
+            if curl -sf http://localhost:6333/collections >/dev/null; then
+              echo "Qdrant is up"
+              exit 0
+            fi
+            echo "Waiting for Qdrant ($i)"; sleep 3;
+          done
+          echo "Qdrant did not become healthy in time"
+          exit 1
+
+      - name: Ingest banking corpus into Qdrant
+        env:
+          CKA_QDRANT_URL: "http://localhost:6333"
+          # Sin API key en CI para simplificar
+          CKA_QDRANT_API_KEY: ""
+        run: |
+          python -m scripts.ingest_corpus_qdrant
+
+      - name: Start API server
+        env:
+          CKA_QDRANT_URL: "http://localhost:6333"
+          CKA_QDRANT_API_KEY: ""
+          CKA_LLM_PROVIDER: "HF"
+          CKA_DLP_ENABLED: "true"
+          CKA_USE_QDRANT: "true"
+          CKA_FAKE_LLM: "false"
+          CKA_API_KEY: "demo-key-cli-81093"
+          CKA_DEMO_BASE_URL: "http://127.0.0.1:8089"
+        run: |
+          python -m uvicorn cortex_ka.api.main:app --host 0.0.0.0 --port 8089 &
+          echo $! > uvicorn.pid
+          sleep 15
+
+      - name: Run E2E demo v2 (HF + Qdrant + Corpus + DLP)
+        env:
+          CKA_DEMO_VARIANT: "v2"
+        run: |
+          python -m scripts.demo_full_e2e_real
+
+      - name: Show uvicorn process list on failure
+        if: failure()
+        run: |
+          ps aux | grep uvicorn || true
+
+      - name: Stop API server
+        if: always()
+        run: |
+          if [ -f uvicorn.pid ]; then
+            kill "$(cat uvicorn.pid)" || true
