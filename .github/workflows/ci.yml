@@ -40,7 +40,7 @@ jobs:
       - name: Run fast pytest suite (no slow, verbose)
         run: |
           pytest -m "not slow" -vv -s
-
+          
   tests-full:
     name: Full test suite (including slow & e2e)
     runs-on: ubuntu-latest
@@ -65,11 +65,19 @@ jobs:
           pip install -e .
           pip install -r requirements-dev.txt
 
-      - name: Run full pytest suite (verbose)
+      - name: Run full pytest suite (verbose, no prints)
         run: |
-          pytest -vv -s
+          pytest -vv
 
-      - name: Dump sample /query responses (JSON) using real HF provider
+      - name: Clean pytest cache and temp (best-effort)
+        if: always()
+        run: |
+          rm -rf .pytest_cache .coverage
+          find /tmp -maxdepth 1 -mindepth 1 -type d -name "pytest-*" -exec rm -rf {} + || true
+
+      - name: Dump sample /query responses (JSON) using real HF provider (non-blocking)
+        if: always()
+        continue-on-error: true
         run: |
           python - << 'PY'
           import os
@@ -77,7 +85,6 @@ jobs:
           from cortex_ka.api.main import app
 
           # Configuración para usar el proveedor real de Hugging Face en /query
-          # HF_API_KEY llega desde los secrets del repo y lo recoge el backend.
           os.environ.setdefault("CKA_LLM_PROVIDER", "HF")
           os.environ.setdefault("CKA_FAKE_LLM", "false")
           # Usamos stub retriever para no depender de Qdrant en este step
@@ -86,7 +93,6 @@ jobs:
           os.environ.setdefault("CKA_API_KEY", "demo-key-cli-81093")
 
           client = TestClient(app)
-
           queries = [
               "Definí los procedimientos para alta de cuentas.",
               "Explicá de forma simple las políticas de confidencialidad de datos de clientes.",
@@ -107,8 +113,9 @@ jobs:
               except Exception:
                   print("RAW BODY:", r.text)
               else:
-                  print("JSON BODY:")
-                  from pprint import pprint
-                  pprint(body)
+                  print("JSON BODY (truncated repr):")
+                  # Evitamos prints gigantes para no inflar logs
+                  s = repr(body)
+                  print(s[:2000] + ("..." if len(s) > 2000 else ""))
           print("=" * 80)
           PY
