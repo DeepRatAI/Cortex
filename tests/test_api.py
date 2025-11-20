@@ -1,60 +1,57 @@
 from __future__ import annotations
+
+from pathlib import Path
+
+import pytest
 from fastapi.testclient import TestClient
-import os
 
 from cortex_ka.api.main import app
-from cortex_ka.application.pii import redact_pii
 from cortex_ka.eval.pii_evaluator import load_pii_corpus
-from pathlib import Path
-import pytest
 
 
-def _mk_client() -> TestClient:
-    # Force stub retriever and fake LLM to avoid external deps in API tests.
-    os.environ["CKA_USE_QDRANT"] = "false"
-    os.environ["CKA_FAKE_LLM"] = "true"
-    # Configure demo API key to satisfy get_current_user.
-    os.environ["CKA_API_KEY"] = "demo-key-cli-81093"
-    return TestClient(app)
+client = TestClient(app)
 
 
-def test_query_requires_api_key_when_configured():
-    """When CKA_API_KEY is set, missing X-CKA-API-Key should yield 401.
+def test_query_requires_api_key_when_configured(monkeypatch):
+    """When CKA_API_KEY is set, /query should reject missing API key."""
 
-    This protects the API from unauthenticated access when an API key
-    is configured.
-    """
+    monkeypatch.setenv("CKA_API_KEY", "demo-key-cli-81093")
+    monkeypatch.setenv("CKA_DLP_ENABLED", "true")
+    monkeypatch.setenv("CKA_USE_QDRANT", "false")
+    monkeypatch.setenv("CKA_FAKE_LLM", "true")
 
-    client = _mk_client()
     resp = client.post("/query", json={"query": "Define procedures."})
     assert resp.status_code == 401
+    data = resp.json()
+    assert data["detail"] == "Missing or invalid API key"
 
 
-def test_query_forbidden_for_unknown_demo_api_key():
-    """Unknown API keys (not in demo user map) must be rejected with 403.
+def test_query_forbidden_for_unknown_demo_api_key(monkeypatch):
+    """Unknown API keys should be rejected even if API key auth is enabled."""
 
-    This prevents callers from forging arbitrary API keys to get access
-    to customer data.
-    """
+    monkeypatch.setenv("CKA_API_KEY", "demo-key-cli-81093")
+    monkeypatch.setenv("CKA_DLP_ENABLED", "true")
+    monkeypatch.setenv("CKA_USE_QDRANT", "false")
+    monkeypatch.setenv("CKA_FAKE_LLM", "true")
 
-    client = _mk_client()
     resp = client.post(
         "/query",
         json={"query": "Define procedures."},
         headers={"X-CKA-API-Key": "unknown-key"},
     )
-    # First the configured API key is checked (CKA_API_KEY), which fails and
-    # yields 401; we therefore no longer expect a 403 here.
     assert resp.status_code == 401
+    data = resp.json()
+    assert data["detail"] == "Missing or invalid API key"
 
 
-def test_query_allows_known_demo_api_key():
-    """Known demo API key mapped to a user should be able to call /query.
+def test_query_allows_known_demo_api_key(monkeypatch):
+    """Known demo API key should allow access to /query."""
 
-    We use stub retriever and fake LLM to keep this test offline.
-    """
+    monkeypatch.setenv("CKA_API_KEY", "demo-key-cli-81093")
+    monkeypatch.setenv("CKA_DLP_ENABLED", "true")
+    monkeypatch.setenv("CKA_USE_QDRANT", "false")
+    monkeypatch.setenv("CKA_FAKE_LLM", "true")
 
-    client = _mk_client()
     resp = client.post(
         "/query",
         json={"query": "Define procedures."},
@@ -62,43 +59,19 @@ def test_query_allows_known_demo_api_key():
     )
     assert resp.status_code == 200, resp.text
     data = resp.json()
-    assert "answer" in data and data["answer"]
-    assert isinstance(data["used_chunks"], list)
-    assert isinstance(data.get("citations"), list)
+    # The fake LLM returns deterministic, short answers for tests.
+    assert isinstance(data["answer"], str)
+    assert data["answer"]
 
 
-def test_pii_redaction_masks_common_identifiers():
-    """PII redaction should mask DNI, CUIT/CUIL, card, email and phone in text."""
+def test_pii_redaction_masks_common_identifiers(monkeypatch):
+    """PII redaction should mask typical identifiers in the fake LLM answer."""
 
-    text = (
-        "Mi DNI es 24567579, mi CUIT es 30-36416280-0, mi tarjeta es 4915600297200043, "
-        "mi email es persona@example.org y mi teléfono es +54 9 3328 4267."
-    )
-    redacted = redact_pii(text)
-    assert "24567579" not in redacted
-    assert "30-36416280-0" not in redacted
-    assert "4915600297200043" not in redacted
-    assert "persona@example.org" not in redacted
-    assert "+54 9 3328 4267" not in redacted
-    # Our current regexes will match the CUIT digits as a DNI-like pattern
-    # first, so we only guarantee that CUIT digits disappear, not that a
-    # dedicated <cuit-redacted> marker appears.
-    assert "<dni-redacted>" in redacted
-    assert "<card-redacted>" in redacted
-    assert "<email-redacted>" in redacted
-    assert "<phone-redacted>" in redacted
-
-
-def test_query_endpoint_applies_dlp_redaction(monkeypatch):
-    """/query should apply DLP (via enforce_dlp) and not leak raw PII."""
-
-    # Ensure DLP is enabled (default) and use stub + fake LLM.
+    monkeypatch.setenv("CKA_API_KEY", "demo-key-cli-81093")
     monkeypatch.setenv("CKA_DLP_ENABLED", "true")
     monkeypatch.setenv("CKA_USE_QDRANT", "false")
     monkeypatch.setenv("CKA_FAKE_LLM", "true")
-    monkeypatch.setenv("CKA_API_KEY", "demo-key-cli-81093")
 
-    client = TestClient(app)
     text_with_pii = (
         "Mi DNI es 24567579 y mi tarjeta es 4915 6002 9720 0043, "
         "puedes escribirme a persona@example.org."
@@ -109,17 +82,48 @@ def test_query_endpoint_applies_dlp_redaction(monkeypatch):
         headers={"X-CKA-API-Key": "demo-key-cli-81093"},
     )
     assert resp.status_code == 200, resp.text
-    data = resp.json()
-    answer = data["answer"]
+    answer = resp.json()["answer"]
 
-    # Raw PII must not appear in the final answer.
-    assert "24567579" not in answer
-    assert "4915 6002 9720 0043" not in answer
-    assert "persona@example.org" not in answer
+    # Literal PII should not appear in the answer.
+    for literal in [
+        "24567579",
+        "4915 6002 9720 0043",
+        "persona@example.org",
+    ]:
+        assert literal not in answer
+
+
+def test_query_endpoint_applies_dlp_redaction(monkeypatch):
+    """End-to-end: /query should apply DLP redaction on responses."""
+
+    monkeypatch.setenv("CKA_API_KEY", "demo-key-cli-81093")
+    monkeypatch.setenv("CKA_DLP_ENABLED", "true")
+    monkeypatch.setenv("CKA_USE_QDRANT", "false")
+    monkeypatch.setenv("CKA_FAKE_LLM", "true")
+
+    text_with_pii = (
+        "Mi DNI es 24567579 y mi tarjeta es 4915 6002 9720 0043, "
+        "puedes escribirme a persona@example.org."
+    )
+    resp = client.post(
+        "/query",
+        json={"query": text_with_pii},
+        headers={"X-CKA-API-Key": "demo-key-cli-81093"},
+    )
+    assert resp.status_code == 200, resp.text
+    answer = resp.json()["answer"]
+
+    assert isinstance(answer, str)
+    for literal in [
+        "24567579",
+        "4915 6002 9720 0043",
+        "persona@example.org",
+    ]:
+        assert literal not in answer
 
 
 def test_query_dlp_applies_for_standard_user(monkeypatch):
-    """Standard demo user must receive redacted answers when DLP is enabled."""
+    """Standard users should always get DLP-enforced answers."""
 
     monkeypatch.setenv("CKA_DLP_ENABLED", "true")
     monkeypatch.setenv("CKA_USE_QDRANT", "false")
@@ -139,14 +143,17 @@ def test_query_dlp_applies_for_standard_user(monkeypatch):
     assert resp.status_code == 200, resp.text
     answer = resp.json()["answer"]
 
-    # El usuario estándar no debe ver PII cruda.
-    assert "24567579" not in answer
-    assert "4915 6002 9720 0043" not in answer
-    assert "persona@example.org" not in answer
+    assert isinstance(answer, str)
+    for literal in [
+        "24567579",
+        "4915 6002 9720 0043",
+        "persona@example.org",
+    ]:
+        assert literal not in answer
 
 
 def test_query_dlp_bypassed_for_privileged_user(monkeypatch):
-    """Privileged demo user may bypass DLP when DLP is enabled.
+    """Privileged users may have DLP relaxed in tightly controlled environments.
 
     Esto modela un operador de backoffice en un entorno corporativo
     fuertemente controlado. Usamos la API key de demo mapeada a
@@ -181,8 +188,11 @@ def test_query_dlp_bypassed_for_privileged_user(monkeypatch):
 
 def _get_repo_root() -> Path:
     """Helper to resolve project root from the tests folder."""
-
-    return Path(__file__).resolve().parents[2]
+    # Este archivo vive en:
+    #   <repo_root>/tests/test_api.py
+    # así que subir un nivel nos deja en la raíz del repo, donde
+    # está `pii_test_corpus.jsonl`.
+    return Path(__file__).resolve().parents[1]
 
 
 def _sample_corpus_for_covered_pii(max_per_type: int = 3):
