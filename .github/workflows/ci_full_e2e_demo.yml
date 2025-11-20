@@ -12,7 +12,7 @@ jobs:
       HF_API_KEY: ${{ secrets.HF_API_KEY }}
       CKA_LLM_PROVIDER: HF
       CKA_DLP_ENABLED: "true"
-      CKA_USE_QDRANT: "false"  # Para el demo usamos stub retriever
+      CKA_USE_QDRANT: "false"  # For demo we can rely on stub retriever to avoid infra complexity
       CKA_FAKE_LLM: "false"
       CKA_API_KEY: "demo-key-cli-81093"
       CKA_DEMO_BASE_URL: "http://127.0.0.1:8088"
