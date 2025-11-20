@@ -1,0 +1,62 @@
+[
+  [
+    "HuggingFaceTB/SmolLM3-3B",
+    404,
+    ""
+  ],
+  [
+    "HuggingFaceTB/SmolLM2-360M-Instruct",
+    404,
+    "Not Found"
+  ],
+  [
+    "HuggingFaceTB/SmolLM2-135M",
+    404,
+    "Not Found"
+  ],
+  [
+    "google/flan-t5-small",
+    404,
+    "Not Found"
+  ],
+  [
+    "google/flan-t5-base",
+    404,
+    "Not Found"
+  ],
+  [
+    "google/flan-t5-large",
+    404,
+    "Not Found"
+  ],
+  [
+    "CohereForAI/aya-23-1B",
+    404,
+    "Not Found"
+  ],
+  [
+    "Qwen/Qwen2.5-0.5B-Instruct",
+    404,
+    "Not Found"
+  ],
+  [
+    "Qwen/Qwen2.5-1.5B-Instruct",
+    404,
+    "Not Found"
+  ],
+  [
+    "HuggingFaceH4/zephyr-7b-beta",
+    404,
+    "Not Found"
+  ],
+  [
+    "mistralai/Mistral-7B-Instruct-v0.2",
+    404,
+    "Not Found"
+  ],
+  [
+    "meta-llama/Llama-3.2-3B-Instruct",
+    404,
+    "Not Found"
+  ]
+]

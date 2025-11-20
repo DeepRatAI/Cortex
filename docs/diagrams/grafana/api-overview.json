@@ -1,0 +1,32 @@
+{
+  "title": "Cortex KA - API Overview",
+  "panels": [
+    {
+      "type": "graph",
+      "title": "Requests per endpoint",
+      "targets": [
+        { "expr": "sum by (endpoint) (rate(cka_http_requests_total[5m]))" }
+      ]
+    },
+    {
+      "type": "graph",
+      "title": "Latency p95 /query",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(cka_query_latency_seconds_bucket[5m])) by (le))"
+        }
+      ]
+    },
+    {
+      "type": "graph",
+      "title": "Retrieved chunks",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(cka_retrieved_chunks_count_bucket[5m])) by (le))"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 30,
+  "version": 1
+}
